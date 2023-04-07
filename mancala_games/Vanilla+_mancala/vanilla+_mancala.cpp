@@ -3,8 +3,80 @@
 #include <limits>
 
 using namespace std;
-void displayBoard(int*);
-int* updateBoard(int*, int, bool);
+
+//displays the board in a way that ensures everything stays perfectly spaced
+void displayBoard(int board[]) {
+    cout << "   12 11 10 9  8  7\n";
+    cout << "-------------------------\n";
+
+    cout << board[1];
+    for(int i = 0; i < (3 - to_string(board[1]).length()); i++){
+        cout << " ";
+    }
+
+    for (int i = 13; i > 7 ; i--) {
+        cout << board[i];
+        for(int j = 0; j < (3 - to_string(board[i]).length()); j++){
+            cout << " ";
+        }
+    }
+
+    cout << "\n   ";
+
+    for (int i = 2; i < 8; i++) {
+        cout << board[i];
+        for(int j = 0; j < (3 - to_string(board[i]).length()); j++){
+            cout << " ";
+        }
+    }
+
+    cout << board[0] << endl;
+
+    cout << "-------------------------\n";
+    cout << "   1  2  3  4  5  6\n";
+}
+
+//updates the board based on user selection
+int* updateBoard(int* board, int pit, bool turn) {
+    int temp = board[pit];
+    int next;
+    board[pit] = 0;
+
+    //this loop moves the stones previously stored at the chosen pit around the board.
+    for (int i = 0; i < temp; i++) {
+        if ((pit <= 6 && pit >= 1) || (pit <= 12 && pit >= 8)) {
+            next = pit + 1;
+        }
+        else if (pit == 7) {//if the current pit is right before P1's pit
+            if (!turn) {//give stones to P1 if it is their turn
+                next = 0;
+            }
+            else {//continue placing stones
+                next = pit + 1;
+            }
+        }
+        else if (pit == 13) {//if the current pit is right before P2's pit
+            if (turn) {//give stones to P2 if it is their turn
+                next = 1;
+            }
+            else {//continue placing stones
+                next = 2;
+            }
+        }
+        else if (pit == 0) {//if the current pit is in P1's well
+            next = 8;
+        }
+        
+        board[next]++;
+        pit = next;
+    }
+    //
+    if ((pit == 0) || (pit == 1)){
+        
+    }
+
+    return board;
+}
 
 //main driver
 int main() {
@@ -92,79 +164,4 @@ int main() {
     }
 
     return 0;
-}
-
-
-//displays the board in a way that ensures everything stays perfectly spaced
-void displayBoard(int board[]) {
-    cout << "   12 11 10 9  8  7\n";
-    cout << "-------------------------\n";
-
-    cout << board[1];
-    for(int i = 0; i < (3 - to_string(board[1]).length()); i++){
-        cout << " ";
-    }
-
-    for (int i = 13; i > 7 ; i--) {
-        cout << board[i];
-        for(int j = 0; j < (3 - to_string(board[i]).length()); j++){
-            cout << " ";
-        }
-    }
-
-    cout << "\n   ";
-
-    for (int i = 2; i < 8; i++) {
-        cout << board[i];
-        for(int j = 0; j < (3 - to_string(board[i]).length()); j++){
-            cout << " ";
-        }
-    }
-
-    cout << board[0] << endl;
-
-    cout << "-------------------------\n";
-    cout << "   1  2  3  4  5  6\n";
-}
-
-//updates the board based on user selection
-int* updateBoard(int* board, int pit, bool turn) {
-    int temp = board[pit];
-    int next;
-    board[pit] = 0;
-
-    //this loop moves the stones previously stored at the chosen pit around the board.
-    for (int i = 0; i < temp; i++) {
-        if ((pit <= 6 && pit >= 1) || (pit <= 12 && pit >= 8)) {
-            next = pit + 1;
-        }
-        else if (pit == 7) {//if the current pit is right before P1's pit
-            if (!turn) {//give stones to P1 if it is their turn
-                next = 0;
-            }
-            else {//continue placing stones
-                next = pit + 1;
-            }
-        }
-        else if (pit == 13) {//if the current pit is right before P2's pit
-            if (turn) {//give stones to P2 if it is their turn
-                next = 1;
-            }
-            else {//continue placing stones
-                next = 2;
-            }
-        }
-        else if (pit == 0) {//if the current pit is in P1's well
-            next = 8;
-        }
-        
-        board[next]++;
-        pit = next;
-    }
-    //
-    if ((pit == 0) || (pit == 1)){
-        
-    }
-
-    return board;
 }
