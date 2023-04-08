@@ -12,7 +12,7 @@
 
 using namespace std;
 void displayBoard(int*);
-void updateBoard(int*, int, bool);
+bool updateBoard(int*, int, bool);
 void populateBoard(int*);
 
 //main driver
@@ -21,6 +21,7 @@ int main() {
     bool turn = 0; //0 means player 1's turn
     bool finish = false;
     bool canPlay = false;
+    bool anotherTurn = false;
     int input;
     int index;
 
@@ -44,7 +45,7 @@ int main() {
             }
             else if(((index >= P1_START && index <= P1_END) && !turn) || ((index >= P2_START && index <= P2_END) && turn)){
                 if (board[index] != 0){
-                    updateBoard(board, index, turn);
+                    anotherTurn = updateBoard(board, index, turn);
                     break;
                 }
                 else{
@@ -91,9 +92,16 @@ int main() {
                     }
                 }
             }
-            //if the next player can play, alternate the turn. Otherwise, it will stay on the same turn.
+
+            //if the next player can play, see if they have another turn, if not, it is the next player's turn. Otherwise, it will stay on the same turn.
             if(canPlay){
-                turn = !turn;
+                if(anotherTurn){
+                    cout << (!turn ? "Player 1 gets another turn!" : "Player 2 gets another turn!") << endl;
+                }
+                else{
+                    turn = !turn;
+                }
+                // if the player received an additional turn, they play again.
                 canPlay = false; //resets this value for next loop
             }
             else{
@@ -124,7 +132,7 @@ void displayBoard(int board[]) {
     cout << "   ";
     for(int i = SIDE_LENGTH * 2 ; i > SIDE_LENGTH; i--){
         cout << i;
-        for(int j = 0; j < (3 - to_string(i).length());j++){
+        for(int j = 0; j<(3 - to_string(i).length());j++){
             cout <<" ";
         }
     }
@@ -174,16 +182,17 @@ void displayBoard(int board[]) {
 }
 
 //updates the board based on user selection
-void updateBoard(int* board, int pit, bool turn) {
+bool updateBoard(int* board, int pit, bool turn) {
     //in the board array,
 
     int temp = board[pit];
-    int next;
+    int next = pit;
     board[pit] = 0;
 
     //this loop moves the stones previously stored at the chosen pit around the board.
     for (int i = 0; i < temp; i++) {
-        if ((pit < P1_END && pit > P1_WELL) || (pit < P2_END && pit > P1_END)) {
+        //pit = next;
+        if ((pit < P1_END && pit >= P2_WELL) || (pit < P2_END && pit > P1_END)) {
             next = pit + 1; 
         }
         else if (pit == P1_END) {
@@ -205,9 +214,14 @@ void updateBoard(int* board, int pit, bool turn) {
         else if (pit == P1_WELL) {
             next = P2_START;
         }
-        
         board[next]++;
         pit = next;
+    }
+    if ((pit == P1_WELL) || (pit == P2_WELL)){
+        return true;
+    }
+    else{
+        return false;
     }
 }
 
