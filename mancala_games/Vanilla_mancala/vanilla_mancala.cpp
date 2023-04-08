@@ -1,32 +1,50 @@
 #include <iostream>
 #include <string>
 #include <limits>
+#define INIT_STONES 4
+#define P1_WELL 0
+#define P2_WELL 1
+#define SIDE_LENGTH 6
+#define P1_START (P2_WELL + 1) //2
+#define P1_END (P1_START + SIDE_LENGTH - 1) //7
+#define P2_START (P1_END + 1) //8
+#define P2_END (P2_START + SIDE_LENGTH - 1) //13
 
 using namespace std;
 void displayBoard(int*);
-int* updateBoard(int*, int, bool);
+void updateBoard(int*, int, bool);
+void populateBoard(int*);
 
 //main driver
 int main() {
-    int board[] = {0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4};
+    int board[P2_END + 1]; 
     bool turn = 0; //0 means player 1's turn
     bool finish = false;
     bool canPlay = false;
     int input;
+    int index;
+
+    populateBoard(board);
     
     do{
         displayBoard(board);
-        cout << (!turn ? "Player 1 ,please choose a pit (1-6)" : "Player 2 ,please choose a pit (7-12)") << endl;
+        if(!turn){//player1
+            cout << "Player 1, please choose a pit (1-" << SIDE_LENGTH << ")" << endl;
+        }
+        else{
+            cout << "Player 2, please choose a pit (" << SIDE_LENGTH + 1 << "-" << SIDE_LENGTH*2 << ")" << endl;
+        }
         while(true){
             cin >> input;
+            index = input + 1;
             if (cin.fail()) {
                 cin.clear();  // clear the error flag
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');  // ignore the invalid input
                 cout << "Invalid input. Please enter an integer." << endl;
             }
-            else if(((input >= 1 && input <= 6) && !turn) || ((input >= 7 && input <= 12) && turn)){
-                if (board[input+1] != 0){
-                    updateBoard(board, input + 1, turn);
+            else if(((index >= P1_START && index <= P1_END) && !turn) || ((index >= P2_START && index <= P2_END) && turn)){
+                if (board[index] != 0){
+                    updateBoard(board, index, turn);
                     break;
                 }
                 else{
@@ -34,12 +52,18 @@ int main() {
                 }
             }
             else{
-                cout << "Please enter a value" << (!turn ? " 1-6\n" : " 7-12\n");
+                cout << "Please enter a value ";
+                if(!turn){//player1
+                    cout << "(1-" << SIDE_LENGTH << ")" << endl;
+                }
+                else{
+                    cout << "(" << SIDE_LENGTH + 1 << "-" << SIDE_LENGTH*2 << ")" << endl;
+                }
             }
         }
 
         //checks if the board is completely empty
-        for (int i = 2; i < 14; i++) {
+        for (int i = P1_START; i <= P2_END; i++) {
             if (board[i] != 0) {
                 finish = false;
                 break;
@@ -52,7 +76,7 @@ int main() {
         //this operation should only continue if finish is false, to prevent double-checking
         if(!finish){
             if (turn){ //if it is currently P2's turn, make sure P1 can play
-                for (int i = 2; i <= 7; i++) {
+                for (int i = P1_START; i <= P1_END; i++) {
                     if (board[i] != 0) {
                         canPlay = true; //means the game continues
                         break;
@@ -60,7 +84,7 @@ int main() {
                 }
             }
             else{//if it is currently P1's turn, make sure P2 can play
-                for (int i = 8; i <= 13; i++) {
+                for (int i = P2_START; i <= P2_END; i++) {
                     if (board[i] != 0) {
                         canPlay = true; //means the game continues
                         break;
@@ -81,14 +105,14 @@ int main() {
     displayBoard(board);
 
     //display who won the game
-    if (board[0]>board[1]){
+    if (board[P1_WELL]>board[P2_WELL]){
         cout << "\n\n\nPlayer 1 won the game!\n\n\n";
     }
-    else if (board[0] == board[1]){
+    else if (board[P1_WELL] == board[P2_WELL]){
         cout << "\n\n\nPlayer 1 and Player 2 tied!\n\n\n";
     }
     else{
-        cout << "\n\n\nPlayer 1 won the game!\n\n\n";
+        cout << "\n\n\nPlayer 2 won the game!\n\n\n";
     }
 
     return 0;
@@ -97,74 +121,102 @@ int main() {
 
 //displays the board in a way that ensures everything stays perfectly spaced
 void displayBoard(int board[]) {
-    cout << "   12 11 10 9  8  7\n";
-    cout << "-------------------------\n";
 
-    cout << board[1];
-    for(int i = 0; i < (3 - to_string(board[1]).length()); i++){
+    cout << "   ";
+    for(int i = SIDE_LENGTH * 2 ; i > SIDE_LENGTH; i--){
+        cout << i;
+        for(int j = 0; j<(3 - to_string(board[i]).length());j++){
+            cout <<" ";
+        }
+    }
+    cout << endl;
+    for(int i = 0; i < SIDE_LENGTH; i++){
+        cout <<"---";
+    }
+    cout << endl;
+
+    cout << board[P2_WELL];
+    //adds a number of spaces to keep characters before final pit even(3 characters)
+    for(int i = 0; i < (3 - to_string(board[P2_WELL]).length()); i++){
         cout << " ";
     }
 
-    for (int i = 13; i > 7 ; i--) {
+    for (int i = P2_END; i >= P2_START ; i--) {
         cout << board[i];
         for(int j = 0; j < (3 - to_string(board[i]).length()); j++){
             cout << " ";
         }
     }
 
-    cout << "\n   ";
+    cout << endl << "   ";
 
-    for (int i = 2; i < 8; i++) {
+    for (int i = P1_START; i <= P1_END; i++) {
         cout << board[i];
         for(int j = 0; j < (3 - to_string(board[i]).length()); j++){
             cout << " ";
         }
     }
+    cout << board[P1_WELL] << endl;
 
-    cout << board[0] << endl;
+    for(int i = 0; i < SIDE_LENGTH; i++){
+        cout <<"---";
+    }
+    
+    cout << endl << "   ";
+    
+    for(int i = 1; i <= SIDE_LENGTH; i++){
+        cout << i;
+        for(int j = 0; j<(3 - to_string(board[i]).length());j++){
+            cout <<" ";
+        }
+    }
 
-    cout << "-------------------------\n";
-    cout << "   1  2  3  4  5  6\n";
+    cout << endl;
 }
 
 //updates the board based on user selection
-int* updateBoard(int* board, int pit, bool turn) {
+void updateBoard(int* board, int pit, bool turn) {
+    //in the board array,
+
     int temp = board[pit];
     int next;
     board[pit] = 0;
 
     //this loop moves the stones previously stored at the chosen pit around the board.
     for (int i = 0; i < temp; i++) {
-        if ((pit <= 6 && pit >= 1) || (pit <= 12 && pit >= 8)) {
-            next = pit + 1;
+        if ((pit < P1_END && pit > P1_WELL) || (pit < P2_END && pit > P1_END)) {
+            next = pit + 1; 
         }
-        else if (pit == 7) {//if the current pit is right before P1's pit
-            if (!turn) {//give stones to P1 if it is their turn
-                next = 0;
+        else if (pit == P1_END) {
+            if (!turn) {
+                next = P1_WELL;
             }
-            else {//continue placing stones
+            else {//continue placing stones on the following pits
                 next = pit + 1;
             }
         }
-        else if (pit == 13) {//if the current pit is right before P2's pit
-            if (turn) {//give stones to P2 if it is their turn
-                next = 1;
+        else if (pit == P2_END) {
+            if (turn) {
+                next = P2_WELL;
             }
-            else {//continue placing stones
-                next = 2;
+            else {//continue placing stones on the following pits
+                next = P1_START;
             }
         }
-        else if (pit == 0) {//if the current pit is in P1's well
-            next = 8;
+        else if (pit == P1_WELL) {
+            next = P2_START;
         }
         
         board[next]++;
         pit = next;
     }
-    //
-    if ((pit == 0) || (pit == 1)){
-        
-    }
+}
 
-    return board;
+void populateBoard(int * board){
+    board[P1_WELL] = 0;
+    board[P2_WELL] = 0;
+
+    for(int i = P1_START; i <= P2_END; i++){
+        board[i] = INIT_STONES;
+    }
 }
