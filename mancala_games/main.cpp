@@ -12,19 +12,19 @@ int main(){
 
         switch (gamemode){
         case 'a':
-            vanilla();
+            vanilla(NOT_PLUS); //vanilla without the plus
             break;
 
         case 'b':
-            vanillaPlus();
+            vanilla(PLUS); //vanilla plus
             break;
 
         case 'c':
-            chooseAny();
+            chooseAny(NOT_PLUS);
             break;
 
         case 'd':
-            chooseAnyPlus();
+            chooseAny(PLUS);
             break;
         
         case 'e':
