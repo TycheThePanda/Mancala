@@ -6,7 +6,7 @@ void displayBoard(int board[]) {
     cout << "   ";
     for(int i = SIDE_LENGTH * 2 ; i > SIDE_LENGTH; i--){
         cout << i;
-        for(int j = 0; j < (3 - to_string(i).length());j++){
+        for(size_t j = 0; j < (3 - to_string(i).length());j++){
             cout <<" ";
         }
     }
@@ -18,13 +18,13 @@ void displayBoard(int board[]) {
 
     cout << board[P2_WELL];
     //adds a number of spaces to keep characters before final pit even(3 characters)
-    for(int i = 0; i < (3 - to_string(board[P2_WELL]).length()); i++){
+    for(size_t i = 0; i < (3 - to_string(board[P2_WELL]).length()); i++){
         cout << " ";
     }
 
     for (int i = P2_END; i >= P2_START ; i--) {
         cout << board[i];
-        for(int j = 0; j < (3 - to_string(board[i]).length()); j++){
+        for(size_t j = 0; j < (3 - to_string(board[i]).length()); j++){
             cout << " ";
         }
     }
@@ -33,7 +33,7 @@ void displayBoard(int board[]) {
 
     for (int i = P1_START; i <= P1_END; i++) {
         cout << board[i];
-        for(int j = 0; j < (3 - to_string(board[i]).length()); j++){
+        for(size_t j = 0; j < (3 - to_string(board[i]).length()); j++){
             cout << " ";
         }
     }
@@ -47,7 +47,7 @@ void displayBoard(int board[]) {
     
     for(int i = 1; i <= SIDE_LENGTH; i++){
         cout << i;
-        for(int j = 0; j<(3 - to_string(i).length());j++){
+        for(size_t j = 0; j<(3 - to_string(i).length());j++){
             cout <<" ";
         }
     }
