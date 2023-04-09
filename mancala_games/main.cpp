@@ -13,22 +13,18 @@ int main(){
         switch (gamemode){
         case 'a':
             playMancala(NOT_CHOOSE, NOT_PLUS);
-            //vanilla(NOT_PLUS); //vanilla without the plus
             break;
 
         case 'b':
             playMancala(NOT_CHOOSE, PLUS);
-            //vanilla(PLUS); //vanilla plus
             break;
 
         case 'c':
             playMancala(CHOOSE, NOT_PLUS);
-            //chooseAny(NOT_PLUS);
             break;
 
         case 'd':
             playMancala(CHOOSE, PLUS);
-            //chooseAny(PLUS);
             break;
         
         case 'e':
