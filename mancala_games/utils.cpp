@@ -132,12 +132,7 @@ void vanilla(bool plus) {
     
     do{
         displayBoard(board);
-        if(!turn){//player1
-            cout << "Player 1, please choose a pit (1-" << SIDE_LENGTH << ")" << endl;
-        }
-        else{
-            cout << "Player 2, please choose a pit (" << SIDE_LENGTH + 1 << "-" << SIDE_LENGTH*2 << ")" << endl;
-        }
+        cout << endl << (!turn ? "Player1's turn" : "Player 2's turn") << endl;
         while(true){
             cin >> input;
             index = input + 1;
@@ -270,4 +265,99 @@ void chooseAny(bool plus) {
     //display who won the game
     displayWinner(board);
 
+}
+
+void playMancala(bool choose, bool plus){
+    int board[P2_END + 1]; 
+    bool turn = 0; //0 means player 1's turn
+    bool finish = false;
+    bool canPlay = false;
+    bool anotherTurn = false;
+    int input;
+    int index;
+
+    populateBoard(board);
+    
+    do {
+        displayBoard(board);
+        cout << endl << (!turn ? "Player1's turn" : "Player 2's turn") << endl;
+        while (true) {
+            cin >> input;
+            index = input + 1;
+            if (cin.fail()) {
+                cin.clear();  // clear the error flag
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');  // ignore the invalid input
+                cout << "Invalid input. Please enter an integer." << endl;
+            }
+            else if ((choose && (index >= P1_START && index <= P2_END)) || (!choose && ((index >= P1_START && index <= P1_END) && !turn) || ((index >= P2_START && index <= P2_END) && turn))) {
+                if (board[index] != 0) {
+                    anotherTurn = updateBoard(board, index, turn);
+                    break;
+                }
+                else {
+                    cout << "Please enter a number of a pit with stones in it." << endl;
+                }
+            }
+            else {
+                cout << "Please enter a value ";
+                if (!choose) {//Mancala mode
+                    if (!turn){//player1
+                        cout << "(1-" << SIDE_LENGTH << ")" << endl;
+                    }
+                    else {
+                        cout << "(" << SIDE_LENGTH + 1 << "-" << SIDE_LENGTH*2 << ")" << endl;
+                    }
+                }
+                else {//Choose any mode
+                    cout << "(" << P1_START - 1 << "-" << P2_END - 1 << ")" << endl;
+                }
+            }
+        }
+
+        //checks if the board is completely empty
+        for (int i = P1_START; i <= P2_END; i++) {
+            if (board[i] != 0) {
+                finish = false;
+                break;
+            }
+            else {
+                finish = true;
+            }
+        }
+        
+        //check if it is possible for the next player to play, 
+        //this operation should only continue if finish is false, to prevent double-checking
+        if (!finish) {
+            if (turn) {//if it is currently P2's turn, make sure P1 can play
+                for (int i = P1_START; i <= P1_END; i++) {
+                    if (board[i] != 0) {
+                        canPlay = true; //means the game continues
+                        break;
+                    }
+                }
+            }
+            else {//if it is currently P1's turn, make sure P2 can play
+                for (int i = P2_START; i <= P2_END; i++) {
+                    if (board[i] != 0) {
+                        canPlay = true; //means the game continues
+                        break;
+                    }
+                }
+            }
+            //if the next player can play, alternate the turn. Otherwise, it will stay on the same turn.
+            if (plus && canPlay && anotherTurn) {
+                cout << (!turn ? "Player 1 gets another turn!" : "Player 2 gets another turn!") << endl;
+            }
+            else if (canPlay) {
+                turn = !turn;
+                canPlay = false;//resets this value for next loop
+            }
+            else {
+                cout << endl << (!turn ? "Player 2 can not play, Player 1 plays again": "Player 1 can not play, Player 2 plays again") << endl;
+            }
+        }
+    }while(!finish);
+    displayBoard(board);
+    //display who won the game
+    displayWinner(board);
 }

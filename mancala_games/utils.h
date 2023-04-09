@@ -7,6 +7,8 @@
 
 #define NOT_PLUS false
 #define PLUS true
+#define NOT_CHOOSE false
+#define CHOOSE true
 #define INIT_STONES 4
 #define P1_WELL 0
 #define P2_WELL 1
@@ -24,6 +26,7 @@ void displayWinner(int*);
 
 void vanilla(bool);
 void chooseAny(bool);
+void playMancala(bool, bool);
 
 bool updateBoard(int*, int, bool); //bool only for + versions
 
